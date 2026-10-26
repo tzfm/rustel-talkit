@@ -1,0 +1,35 @@
+[package]
+name = "rustel-talkit"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/tzfm/rustel-talkit"
+publish = false
+description = "Talk It! style formant speech synthesizer in pure Rust: text to samples, twenty voice presets, English and Spanish"
+
+[features]
+# Speaking through an output device (the talkit command). The library itself
+# is pure DSP, so a host that only renders keeps the audio stack out.
+default = ["play"]
+play = ["dep:cpal"]
+
+[dependencies]
+cpal = { version = "=0.18.2", optional = true }
+
+[[bin]]
+name = "talkit"
+path = "src/main.rs"
+required-features = ["play"]
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+opt-level = 3
+strip = "symbols"
+
+# Local iteration
+[profile.local]
+inherits = "release"
+lto = "thin"
+codegen-units = 16
+incremental = true
